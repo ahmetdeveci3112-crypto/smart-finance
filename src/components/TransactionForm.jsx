@@ -11,7 +11,7 @@ import { analyzeStatement } from "../lib/gemini";
 
 // Image compression utility
 const compressImage = async (file) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = (event) => {
@@ -28,10 +28,16 @@ const compressImage = async (file) => {
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                 canvas.toBlob((blob) => {
-                    resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                    if (blob) {
+                        resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                    } else {
+                        reject(new Error("Canvas to Blob conversion failed"));
+                    }
                 }, 'image/jpeg', 0.7);
             };
+            img.onerror = (error) => reject(new Error("Image load failed: " + error));
         };
+        reader.onerror = (error) => reject(new Error("File read failed: " + error));
     });
 };
 
