@@ -29,7 +29,7 @@ export async function analyzeReceipt(file) {
   try {
     // Use the new SDK method signature
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash-001",
+      model: "gemini-2.5-flash",
       contents: [
         {
           role: "user",
