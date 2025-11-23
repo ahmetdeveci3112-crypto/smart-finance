@@ -30,7 +30,9 @@ export default function Dashboard() {
         }
 
         if (!db && !isDemo) {
+            console.error("Firestore database is not initialized.");
             setLoading(false);
+            alert("Veritabanı bağlantısı kurulamadı. Lütfen API anahtarlarınızı kontrol edin.");
             return;
         }
 
@@ -46,6 +48,14 @@ export default function Dashboard() {
             }));
             setTransactions(docs);
             setLoading(false);
+        }, (error) => {
+            console.error("Firestore Error:", error);
+            setLoading(false);
+            if (error.code === 'permission-denied') {
+                alert("Veritabanı erişim izni yok. Lütfen Firebase Console'dan Firestore kurallarını kontrol edin.");
+            } else {
+                alert("Veri yüklenirken bir hata oluştu: " + error.message);
+            }
         });
 
         return unsubscribe;
