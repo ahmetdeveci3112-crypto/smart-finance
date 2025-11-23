@@ -94,6 +94,26 @@ export default function TransactionForm({ onClose }) {
                 <div className="p-6">
                     <ReceiptScanner onScanComplete={handleScanComplete} />
 
+                    {receiptFile && (
+                        <div className="mb-6 relative group">
+                            <div className="relative rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 h-48 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                                <img
+                                    src={URL.createObjectURL(receiptFile)}
+                                    alt="Fiş Önizleme"
+                                    className="h-full object-contain"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setReceiptFile(null)}
+                                    className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                                    title="Fişi Kaldır"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Başlık</label>

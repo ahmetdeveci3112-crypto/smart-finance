@@ -34,7 +34,7 @@ export async function analyzeReceipt(file) {
         {
           role: "user",
           parts: [
-            { text: "Bu fişi analiz et ve şu JSON formatında yanıt ver: { merchant: 'işyeri adı', date: 'YYYY-MM-DD', amount: 'toplam tutar (sadece sayı)', category_guess: 'food|transport|shopping|bills|other' (tahmin et) }. Sadece JSON döndür." },
+            { text: "Bu fişi analiz et ve şu JSON formatında yanıt ver: { title: 'işyeri adı', date: 'YYYY-MM-DD', amount: 'toplam tutar (sadece sayı)', category_guess: 'food|transport|shopping|bills|other' (tahmin et) }. Sadece JSON döndür." },
             await fileToGenerativePart(file)
           ]
         }
