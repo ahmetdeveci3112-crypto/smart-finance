@@ -23,8 +23,8 @@ export default function ReceiptScanner({ onScanComplete }) {
                 onScanComplete(result, file);
             }
         } catch (error) {
-            console.error("Scan failed:", error); // Translated
-            alert("Fiş okunamadı. Lütfen tekrar deneyin."); // Translated
+            console.error("Scan failed:", error);
+            alert(`Fiş okunamadı: ${error.message || "Bilinmeyen hata"}`);
         } finally {
             setScanning(false);
         }
