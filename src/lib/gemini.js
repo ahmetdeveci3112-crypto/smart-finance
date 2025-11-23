@@ -41,7 +41,7 @@ export async function analyzeReceipt(file) {
       ]
     });
 
-    const text = response.text();
+    const text = response.text;
 
     try {
       const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
