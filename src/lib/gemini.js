@@ -55,3 +55,31 @@ export async function analyzeReceipt(file) {
     throw new Error("Yapay zeka servisine erişilemedi: " + error.message);
   }
 }
+
+export async function analyzeStatement(file) {
+  if (!API_KEY) {
+    throw new Error("Gemini API anahtarı eksik.");
+  }
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: "Bu kredi kartı ekstresini veya banka dökümünü analiz et. Tüm harcama ve ödemeleri tek tek çıkar. Şu JSON formatında bir DİZİ (Array) döndür: [{ date: 'YYYY-MM-DD', title: 'İşyeri/İşlem Adı', amount: Tutar (Sayı, pozitif olmalı), type: 'expense' (harcama ise) veya 'income' (ödeme/maaş ise), category: 'food|transport|shopping|bills|other' (tahmin et) }]. Sadece JSON dizisi döndür." },
+            await fileToGenerativePart(file)
+          ]
+        }
+      ]
+    });
+
+    const text = response.text;
+    const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleanText);
+  } catch (error) {
+    console.error("Statement Analysis Error:", error);
+    throw new Error("Ekstre analiz edilemedi: " + error.message);
+  }
+}
