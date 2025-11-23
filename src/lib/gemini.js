@@ -1,7 +1,9 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(API_KEY);
+
+// Initialize the new client
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 async function fileToGenerativePart(file) {
   const base64EncodedDataPromise = new Promise((resolve) => {
@@ -12,7 +14,7 @@ async function fileToGenerativePart(file) {
   return {
     inlineData: {
       data: await base64EncodedDataPromise,
-      mimeType: file.type,
+      mimeType: file.type || "image/jpeg",
     },
   };
 }
@@ -25,19 +27,20 @@ export async function analyzeReceipt(file) {
   console.log("Analyzing file:", file.name, "Type:", file.type, "Size:", file.size);
 
   try {
-    console.log("Initializing Gemini Model: gemini-1.5-flash");
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const prompt = "Bu fişi analiz et ve şu JSON formatında yanıt ver: { merchant: 'işyeri adı', date: 'YYYY-MM-DD', amount: 'toplam tutar (sadece sayı)', category_guess: 'food|transport|shopping|bills|other' (tahmin et) }. Sadece JSON döndür.";
+    // Use the new SDK method signature
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: "Bu fişi analiz et ve şu JSON formatında yanıt ver: { merchant: 'işyeri adı', date: 'YYYY-MM-DD', amount: 'toplam tutar (sadece sayı)', category_guess: 'food|transport|shopping|bills|other' (tahmin et) }. Sadece JSON döndür." },
+            await fileToGenerativePart(file)
+          ]
+        }
+      ]
+    });
 
-    const imagePart = await fileToGenerativePart(file);
-
-    if (!imagePart.inlineData.mimeType) {
-      console.warn("MimeType missing, defaulting to image/jpeg");
-      imagePart.inlineData.mimeType = "image/jpeg";
-    }
-
-    const result = await model.generateContent([prompt, imagePart]);
-    const response = await result.response;
     const text = response.text();
 
     try {
