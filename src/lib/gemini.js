@@ -25,7 +25,10 @@ export async function analyzeReceipt(file) {
   console.log("Analyzing file:", file.name, "Type:", file.type, "Size:", file.size);
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      apiVersion: "v1beta"
+    });
     const prompt = "Bu fişi analiz et ve şu JSON formatında yanıt ver: { merchant: 'işyeri adı', date: 'YYYY-MM-DD', amount: 'toplam tutar (sadece sayı)', category_guess: 'food|transport|shopping|bills|other' (tahmin et) }. Sadece JSON döndür.";
 
     const imagePart = await fileToGenerativePart(file);
